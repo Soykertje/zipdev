@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  nginx:
+    image: jonasal/nginx-certbot:latest
+    restart: unless-stopped
+    environment:
+      - NGINX_CERTBOT_DOMAIN=zipdev.jangom.com
+      - NGINX_CERTBOT_EMAIL=juanandresgonzalezmolina18@gmail.com
+      - NGINX_CERTBOT_USE_STAGING=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Place your custom Nginx configs in ./compose/local/nginx/
+      # They will be loaded from user_conf.d
+      - ./compose/dev/nginx/:/etc/nginx/user_conf.d:ro
+      # Let's Encrypt certificates will be stored here
+      - ./nginx_secrets:/etc/letsencrypt
+      - staticfiles:/staticfiles/
+
+  zipdev:
+    build:
+      context: ./
+      dockerfile: compose/local/django/Dockerfile
+    env_file:
+      - .env/.dev/.django
+      - .env/.dev/.postgres
+    volumes:
+      - .:/app
+      - staticfiles:/app/staticfiles
+    expose:
+      - "8000"
+    command: /start
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    restart: on-failure
+    env_file:
+      - .env/.dev/.postgres
+    volumes:
+      - zipdev_postgres_data:/var/lib/postgresql/data
+      - zipdev_postgres_data_backups:/backups
+    expose:
+      - "5432"
+
+  rabbitmq:
+    image: rabbitmq:3.10.25-management-alpine
+    expose:
+      - "5672"
+      - "15672"
+
+  celery:
+    build:
+      context: ./
+      dockerfile: compose/dev/celery/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - .env/.dev/.django
+      - .env/.dev/.postgres
+    depends_on:
+      - zipdev
+      - rabbitmq
+    command: /start
+
+volumes:
+  staticfiles:
+  zipdev_postgres_data: {}
+  zipdev_postgres_data_backups: {}
