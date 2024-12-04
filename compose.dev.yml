@@ -5,9 +5,8 @@ services:
     image: jonasal/nginx-certbot:latest
     restart: unless-stopped
     environment:
-      - NGINX_CERTBOT_DOMAIN=zipdev.jangom.com
-      - NGINX_CERTBOT_EMAIL=juanandresgonzalezmolina18@gmail.com
-      - NGINX_CERTBOT_USE_STAGING=true
+      - CERTBOT_EMAIL=juanandresgonzalezmolina18@gmail.com
+      - STAGING=true
     ports:
       - "80:80"
       - "443:443"
