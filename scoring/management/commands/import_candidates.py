@@ -89,6 +89,7 @@ class Command(BaseCommand):
                         'disqualification_note': cleaned_row.get('Disqualification note', ''),
                     }
                 )
+                candidate.save()
 
                 self.stdout.write(f'Created candidate: {candidate.name}')
 
