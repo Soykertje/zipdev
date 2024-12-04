@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+# Script to wait until DB is fully up
+until python manage.py migrate
+do
+    echo "Waiting migrate DB..."
+    sleep 2
+done
+
+python manage_dev.py collectstatic --noinput --clear
+gunicorn --bind 0.0.0.0:8000 zipdev.wsgi

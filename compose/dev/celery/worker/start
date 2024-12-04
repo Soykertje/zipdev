@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+celery -A zipdev worker -l INFO --concurrency=2 -Q score_dandidates -n "Candidate_Scorer"
