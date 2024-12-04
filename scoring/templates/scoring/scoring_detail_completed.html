@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+    <h1>Scoring Results for:</h1>
+    <p>{{ query }}</p>
+    <div style="width: 100%; height: calc(100vh - 100px); overflow-y: auto; overflow-x: scroll;">
+        <table>
+            <thead>
+            <tr>
+                {% for key in result.0.keys %}
+                    <th style="position: sticky; top: 0;">{{ key|capfirst }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in result %}
+                <tr>
+                    {% for value in row.values %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

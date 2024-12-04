@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Scoring Tasks</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Criteria</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in scoring_results %}
+                <tr>
+                    <td><a href='{% url 'scoring_task_detail' result.id %}'>{{ result.query }}</a></td>
+                    <td>{{ result.status }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No results found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

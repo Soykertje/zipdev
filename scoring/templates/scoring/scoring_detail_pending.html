@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Your search is currently being processed, this page will automatically reload as soon as it's finished.</h1>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function checkStatus() {
+            fetch('{% url 'scoring_task_detail_api' scoring_task.id %}')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "completed") {
+                        location.reload();
+                    }
+                });
+        }
+        setInterval(checkStatus, 2000);
+    </script>
+{% endblock %}
+

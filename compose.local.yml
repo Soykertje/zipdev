@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  nginx:
+    restart: unless-stopped
+    image: nginx:1.19.0-alpine
+    expose:
+      - "80"
+      - "443"
+      - "8000"
+    ports:
+      - "80:80"
+    volumes:
+      - ./compose/local/nginx/:/etc/nginx/conf.d
+      - staticfiles:/staticfiles/
+
+  zipdev:
+    build:
+      context: ./
+      dockerfile: compose/local/django/Dockerfile
+    env_file:
+      - .env/.local/.django
+      - .env/.local/.postgres
+    volumes:
+      - .:/app
+      - staticfiles:/app/staticfiles
+    expose:
+      - "8000"
+    command: /start
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    restart: on-failure
+    env_file:
+      - .env/.local/.postgres
+    volumes:
+      - zipdev_postgres_data:/var/lib/postgresql/data
+      - zipdev_postgres_data_backups:/backups
+    expose:
+      - "5432"
+
+  rabbitmq:
+    image: rabbitmq:3.10.25-management-alpine
+    expose:
+      - "5672"
+      - "15672"
+
+  celery: &celery
+    build:
+      context: ./
+      dockerfile: compose/local/celery/Dockerfile
+    volumes:
+      - .:/app
+    env_file:
+      - .env/.local/.django
+      - .env/.local/.postgres
+    depends_on:
+      - zipdev
+      - rabbitmq
+    command:
+      - /start
+
+volumes:
+  staticfiles:
+  zipdev_postgres_data: { }
+  zipdev_postgres_data_backups: { }
+  flower_data: { }
