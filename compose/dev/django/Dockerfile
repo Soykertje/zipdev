@@ -17,6 +17,4 @@ RUN chmod +x /start
 
 COPY . /app
 
-EXPOSE 8000
-
 WORKDIR /app
