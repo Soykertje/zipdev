@@ -5,8 +5,8 @@ services:
     image: jonasal/nginx-certbot:latest
     restart: unless-stopped
     environment:
-      - CERTBOT_EMAIL=juanandresgonzalezmolina18@gmail.com
-      - STAGING=true
+      - CERTBOT_EMAIL="juanandresgonzalezmolina18@gmail.com"
+      - STAGING=1
     ports:
       - "80:80"
       - "443:443"
