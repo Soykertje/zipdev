@@ -144,3 +144,7 @@ CELERY_QUEUES = {
         'name': 'score_dandidates',
     }
 }
+
+# Runpod
+RUNPOD_API_KEY = env("RUNPOD_API_KEY")
+SCORER_ENDPOINT_ID = env("SCORER_ENDPOINT_ID")
