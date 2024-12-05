@@ -1,13 +1,6 @@
 import re
 from datetime import datetime
-import pandas as pd
-import numpy as np
-
-# For NLP preprocessing
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from dateutil import parser
-from utils.cleaning.helpers import clean_text
 
 
 def extract_years_of_experience(experiences_text):
