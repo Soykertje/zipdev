@@ -4,8 +4,6 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from scoring.models.candidate import Candidate
 from scoring.models.question_answer import QuestionAnswer
-from utils.cleaning.helpers import clean_text
-from utils.scoring.helpers import extract_years_of_experience
 from django.utils import timezone
 
 
@@ -50,14 +48,12 @@ class Command(BaseCommand):
             for index, row in df.iterrows():
                 # Convert row to a dictionary
                 row_data = row.to_dict()
-                print(f"{row_data=}")
 
                 # Clean and preprocess row data
                 cleaned_row = {k: str(v).strip() if v else '' for k, v in row_data.items()}
 
                 # Parse creation_time
                 creation_time = self.parse_date(cleaned_row.get('Creation time'))
-                print(f"{creation_time=}")
                 if creation_time is None:
                     self.stdout.write(self.style.WARNING(
                         f'Creation time missing for candidate {cleaned_row.get("Name")}, setting to current time.'
@@ -103,8 +99,8 @@ class Command(BaseCommand):
 
                     if question_text:
                         # Clean question and answer
-                        question_text = clean_text(question_text)
-                        answer_text = clean_text(answer_text)
+                        question_text = question_text
+                        answer_text = answer_text
 
                         qa, qa_created = QuestionAnswer.objects.update_or_create(
                             candidate=candidate,
