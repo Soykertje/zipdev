@@ -3,4 +3,4 @@
 set -o errexit
 set -o nounset
 
-celery -A zipdev worker -l INFO --concurrency=3 -Q score_dandidates -n "Candidate Scorer"
+celery -A zipdev worker -l INFO --concurrency=50 -Q score_dandidates -n "Candidate Scorer" -P eventlet
