@@ -114,6 +114,6 @@ def map_education_level(educations_text):
     education_score = 0
     for level, score in education_levels.items():
         if level in educations_text:
-            education_score += education_levels[score]
+            education_score += score
     return education_score
 
