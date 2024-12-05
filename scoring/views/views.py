@@ -4,16 +4,20 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 
 # Models
-from scoring.models import ScoringTask, Candidate
+from scoring.models import ScoringTask
 
 # Forms
 from scoring.forms.scoring_form import ScoringForm
+from scoring.forms.import_data_form import ImportDataForm
 
 # Tasks
 from scoring.tasks.score_candidates import score_candidates
 
 # Services
 from scoring.services.scoring_result_detail import ScoringResultDetail
+
+# Utils
+from utils.import_candidates import import_candidates_from_xlsx
 
 
 def scoring_view(request):
@@ -43,3 +47,18 @@ def scoring_result_detail(request, pk: int):
 def scoring_result_detail_api(request, pk: int):
     scoring_task = get_object_or_404(ScoringTask, pk=pk)
     return JsonResponse({'status': scoring_task.status})
+
+
+def import_candidates(request):
+    if request.method == 'POST':
+        form = ImportDataForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = form.cleaned_data['file']
+            import_candidates_from_xlsx(file)
+            return redirect('home')
+        else:
+            return render(request, 'import/import_candidates.html', {'form': form})
+    else:
+        form = ImportDataForm()
+        return render(request, 'import/import_candidates.html', {'form': form})
+
